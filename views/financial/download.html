@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Catatan Keuangan Bulan {{ .selectedMonth }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+
+        .summary-box {
+            display: flex;
+            justify-content: start;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .box {
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 5px 5px;
+            text-align: center;
+            width: 200px;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #333;
+        }
+
+        th,
+        td {
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        thead {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+    <h5 style="text-align: center;font-size: 30px;margin-bottom: 30px;">
+        Catatan {{ if .pemasukanOnly }} Pemasukan {{ end }} {{ if .pengeluaranOnly }} Pengeluaran {{ end }}
+        Keuangan Bulan {{ .selectedMonth }}
+    </h5>
+
+    <div class="summary-box">
+        <div class="">
+            <h4>Total Pemasukan :</h4>
+            <div class="box">
+                <h4>Rp. {{ formatIDR .total_pemasukan }}</h4>
+            </div>
+        </div>
+        <div class="">
+            <h4>Total Pengeluaran :</h4>
+            <div class="box">
+                <h4>Rp. {{ formatIDR .total_pengeluaran }}</h4>
+            </div>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Tanggal</th>
+                <th>Tipe</th>
+                <th>Kategori</th>
+                <th>Nominal</th>
+                <th>Keterangan</th>
+                <th>Lampiran</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{ if .financials }}
+            {{ range $index, $item := .financials }}
+            <tr>
+                <td>{{ indexNo $index 1 }}</td>
+                <td>{{ .Date.Format "02 January 2006" }}</td>
+                <td>
+                    <span>{{ .Type }}</span>
+                </td>
+                <td>{{ .Category }}</td>
+                <td>Rp. {{ formatIDR .Nominal }}</td>
+                <td>
+                    {{ if .Description }}
+                    {{ .Description }}
+                    {{ else }}
+                    -
+                    {{ end }}
+                </td>
+                <td>
+                    {{ if .Attachment }}
+                    <img src="data:image/jpeg;base64,{{ .Attachment }}" alt="Foto Lampiran"
+                        class="img-thumbnail"
+                        style="height: 60px; width: 60px; object-fit: cover" />
+                    {{ else }}
+                    <img src="https://placehold.co/60x60" alt="Foto Kosong" class="img-thumbnail"
+                        style="height: 60px; width: 60px; object-fit: cover" />
+                    {{ end }}
+                </td>
+            </tr>
+            {{ end }}
+            {{ else }}
+            <tr>
+                <td colspan="8">
+                    <div style="display: flex;justify-content: center;">
+                        <span style="color: red;">Belum ada data!</span>
+                    </div>
+                </td>
+            </tr>
+            {{ end }}
+        </tbody>
+    </table>
+
+    <script>
+        window.onload = function () {
+            window.print();
+        };
+        window.onafterprint = function () {
+            window.close();
+        };
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,14 @@
+{
+    "DATABASE": {
+        "USER": "root",
+        "PASSWORD": "root",
+        "NAME": "financial_record",
+        "HOST": "127.0.0.1",
+        "PORT": "8889",
+        "DRIVER": "mysql"
+    },
+    "SESSION": {
+        "ID": "finacial_record_okt",
+        "FLASH": "flash_logout"
+    }
+}

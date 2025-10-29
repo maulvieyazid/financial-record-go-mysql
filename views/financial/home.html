@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pencatatan Keuangan - IDN</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Bootstrap Icon -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <main class="my-5">
+            <h5><strong>Catatan Keuangan</strong></h5>
+
+            {{ if .error }}
+            <div class="alert alert-danger">{{ .error }}</div>
+            {{ end }}
+            {{ if .success }}
+            <div class="alert alert-success">{{ .success }}</div>
+            {{ end }}
+
+            <div class="row mb-3">
+                <div class="col-12 col-md-3">
+                    <div class="card">
+                        <div class="card-header">
+                            Total Pemasukan Bulan : {{ .selectedMonth }}
+                        </div>
+                        <div class="card-body">
+                            <h4>Rp. {{ formatIDR .total_pemasukan }}</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3">
+                    <div class="card">
+                        <div class="card-header">
+                            Total Pengeluaran Bulan : {{ .selectedMonth }}
+                        </div>
+                        <div class="card-body">
+                            <h4>Rp. {{ formatIDR .total_pengeluaran }}</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label for="monthSelect">Filter Bulan :</label>
+                    <select class="form-select mb-3" id="monthSelect"
+                        onchange="updateQueryParam('selected_month', this.value)">
+                        {{range .months}}
+                        <option value="{{.}}" {{if eq . $.selectedMonth}}selected{{end}}>{{.}}</option>
+                        {{end}}
+                    </select>
+                </div>
+
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <div class="d-flex align-items-center gap-5">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="pemasukan" id="pemasukanOnly"
+                                        onclick="filterpemasukanOnly(this)" {{ if .pemasukanOnly }} checked {{ end }}>
+                                    <label class="form-check-label" for="pemasukan">
+                                        Hanya Pemasukan
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="pengeluaran"
+                                        id="pengeluaranOnly" onclick="filterpengeluaranOnly(this)" {{ if
+                                        .pengeluaranOnly }} checked {{ end }}>
+                                    <label class="form-check-label" for="pengeluaran">
+                                        Hanya Pengeluaran
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="d-flex align-items-center justify-content-md-end gap-3">
+                                <a href="/financial/download_financial_record?pemasukanOnly={{ .pemasukanOnly }}&pengeluaranOnly={{ .pengeluaranOnly }}&selected_month={{ .selectedMonth }}"
+                                    target="_blank" class="btn btn-sm btn-danger">Export PDF</a>
+                                <a href="/financial/add_financial_record" class="btn btn-sm btn-primary">Tambah Data</a>
+                                <a href="/profile" class="btn btn-sm btn-warning">Profile</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Tanggal</th>
+                                    <th>Tipe</th>
+                                    <th>Kategori</th>
+                                    <th>Nominal</th>
+                                    <th>Keterangan</th>
+                                    <th>Lampiran</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{ if .financials }}
+                                {{ range $index, $item := .financials }}
+                                <tr>
+                                    <td>{{ indexNo $index 1 }}</td>
+                                    <td>{{ .Date.Format "02 January 2006" }}</td>
+                                    <td class="text-capitalize">
+                                        {{ if eq .Type "pemasukan" }}
+                                        <span class="badge text-bg-success">{{ .Type }}</span>
+                                        {{ else if eq .Type "pengeluaran"}}
+                                        <span class="badge text-bg-danger">{{ .Type }}</span>
+                                        {{ else }}
+                                        <span class="badge text-bg-danger">{{ .Type }}</span>
+                                        {{ end }}
+                                    </td>
+                                    <td class="text-capitalize">{{ .Category }}</td>
+                                    <td>Rp. {{ formatIDR .Nominal }}</td>
+                                    <td>
+                                        {{ if .Description }}
+                                        {{ .Description }}
+                                        {{ else }}
+                                        -
+                                        {{ end }}
+                                    </td>
+                                    <td>
+                                        {{ if .Attachment }}
+                                        <img src="data:image/jpeg;base64,{{ .Attachment }}" alt="Foto Lampiran"
+                                            class="img-thumbnail"
+                                            style="height: 60px; width: 60px; object-fit: cover" />
+                                        {{ else }}
+                                        <img src="https://placehold.co/60x60" alt="Foto Kosong" class="img-thumbnail"
+                                            style="height: 60px; width: 60px; object-fit: cover" />
+                                        {{ end }}
+                                    </td>
+                                    <td>
+                                        <a href="/financial/edit_financial_record?id={{ .Id }}"
+                                            class="btn btn-sm btn-warning">Edit</a>
+                                        <a href="/financial/delete_financial_record?id={{ .Id }}"
+                                            class="btn btn-sm btn-danger"
+                                            onclick="return confirm('Yakin ingin menghapus data ini?')">
+                                            Delete
+                                        </a>
+                                    </td>
+                                </tr>
+                                {{ end }}
+                                {{ else }}
+                                <tr>
+                                    <td colspan="8">
+                                        <div class="d-flex justify-content-center">
+                                            <span class="text-danger">Belum ada catatan keuangan</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {{ end }}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>
+        function updateQueryParam(key, value, replaceGroup = false) {
+            const url = new URL(window.location);
+            const params = url.searchParams;
+
+            if (replaceGroup && (key === "pemasukanOnly" || key === "pengeluaranOnly")) {
+                // Hapus kedua key untuk menghindari double
+                params.delete("pemasukanOnly");
+                params.delete("pengeluaranOnly");
+            }
+
+            if (value === "" || value === null) {
+                params.delete(key); // hapus jika kosong
+            } else {
+                params.set(key, value);
+            }
+
+            url.search = params.toString();
+            window.location.href = url.toString();
+        }
+
+
+        function changeMonth(select) {
+            updateQueryParam("selected_month", select.value, false);
+        }
+
+        function filterpemasukanOnly(checkbox) {
+            if (checkbox.checked) {
+                updateQueryParam("pemasukanOnly", checkbox.checked ? "true" : "", true);
+            } else {
+                updateQueryParam("pemasukanOnly", checkbox.checked ? "false" : "", true);
+            }
+        }
+
+        function filterpengeluaranOnly(checkbox) {
+            if (checkbox.checked) {
+                updateQueryParam("pengeluaranOnly", checkbox.checked ? "true" : "", true);
+            } else {
+                updateQueryParam("pengeluaranOnly", checkbox.checked ? "false" : "", true);
+            }
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
