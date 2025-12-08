@@ -19,7 +19,11 @@ func InitConfiguration() {
 
 	viper.SetConfigName("app.conf")
 	viper.SetConfigType("json")
+	// Look in multiple locations so tests running from package folders
+	// can still find the project-level `app.conf.json`.
 	viper.AddConfigPath(".")
+	viper.AddConfigPath("..")
+	viper.AddConfigPath("./config")
 
 	if err := viper.ReadInConfig(); err != nil {
 		log.Println("app.conf.json not found, continuing with environment variables/.env")
@@ -29,4 +33,7 @@ func InitConfiguration() {
 	// Convert env names like DATABASE_USER to viper key DATABASE.USER
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv()
+
+	// sensible defaults for local development/tests
+	viper.SetDefault("DATABASE.DRIVER", "mysql")
 }
