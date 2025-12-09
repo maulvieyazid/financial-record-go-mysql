@@ -21,7 +21,7 @@ type FinancialController struct {
 }
 
 func NewFinancialController(db *sql.DB) *FinancialController {
-	return &FinancalController{
+	return &FinancialController{
 		db: db,
 	}
 }
@@ -40,7 +40,7 @@ func formatIDR(n int64) string {
 	return strings.Join(result, ".") + ",00"
 }
 
-func (controller *FinancalController) Home(writer http.ResponseWriter, request *http.Request) {
+func (controller *FinancialController) Home(writer http.ResponseWriter, request *http.Request) {
 
 	templateLayout := "views/financial/home.html"
 
@@ -106,7 +106,7 @@ func (controller *FinancalController) Home(writer http.ResponseWriter, request *
 	template.Execute(writer, data)
 }
 
-func (controller *FinancalController) AddFinacialRecord(writer http.ResponseWriter, request *http.Request) {
+func (controller *FinancialController) AddFinacialRecord(writer http.ResponseWriter, request *http.Request) {
 
 	templateLayout := "views/financial/create.html"
 
@@ -179,7 +179,7 @@ func (controller *FinancalController) AddFinacialRecord(writer http.ResponseWrit
 
 }
 
-func (controller *FinancalController) DeleteFinancialRecord(writer http.ResponseWriter, request *http.Request) {
+func (controller *FinancialController) DeleteFinancialRecord(writer http.ResponseWriter, request *http.Request) {
 
 	// panggil session
 	session, _ := config.Store.Get(request, config.SESSION_ID)
@@ -204,7 +204,7 @@ func (controller *FinancalController) DeleteFinancialRecord(writer http.Response
 	http.Redirect(writer, request, "/home", http.StatusSeeOther)
 }
 
-func (controller *FinancalController) DownloadFinancialRecord(writer http.ResponseWriter, request *http.Request) {
+func (controller *FinancialController) DownloadFinancialRecord(writer http.ResponseWriter, request *http.Request) {
 
 	templateLayout := "views/financial/download.html"
 
@@ -253,7 +253,7 @@ func (controller *FinancalController) DownloadFinancialRecord(writer http.Respon
 
 }
 
-func (controller *FinancalController) EditFinancialRecord(writer http.ResponseWriter, request *http.Request) {
+func (controller *FinancialController) EditFinancialRecord(writer http.ResponseWriter, request *http.Request) {
 
 	templateLayout := "views/financial/edit.html"
 
