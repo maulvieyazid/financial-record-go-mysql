@@ -16,11 +16,11 @@ import (
 	"time"
 )
 
-type FinancalController struct {
+type FinancialController struct {
 	db *sql.DB
 }
 
-func NewFinancialController(db *sql.DB) *FinancalController {
+func NewFinancialController(db *sql.DB) *FinancialController {
 	return &FinancalController{
 		db: db,
 	}
