@@ -3,7 +3,7 @@
         "USER": "adminfin",
         "PASSWORD": "idnmantab",
         "NAME": "financial_record",
-        "HOST": "172.23.10.7",
+        "HOST": "172.23.10.2",
         "PORT": "3306",
         "DRIVER": "mysql"
     },
