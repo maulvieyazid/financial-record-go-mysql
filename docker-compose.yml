@@ -1,0 +1,13 @@
+name: mlv-go
+
+services:
+  app:
+    image: maulvieyazid/mlv-go:1.0
+    build: ./app
+    ports:
+      - "8000:8080"
+    volumes:
+      - vol-app:/app/public/user_photo
+
+volumes:
+  vol-app:
