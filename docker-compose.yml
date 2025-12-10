@@ -5,7 +5,7 @@ services:
     image: maulvieyazid/mlv-go:1.0
     build: ./app
     ports:
-      - "8000:8080"
+      - "8000:8000"
     volumes:
       - vol-app:/app/public/user_photo
 
