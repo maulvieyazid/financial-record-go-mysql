@@ -13,7 +13,7 @@ require (
 	github.com/gorilla/sessions v1.4.0
 	github.com/spf13/viper v1.21.0
 	golang.org/x/crypto v0.43.0
-	
+	github.com/joho/godotenv v1.5.1
 )
 
 require (
